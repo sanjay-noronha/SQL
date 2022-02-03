@@ -1,0 +1,42 @@
+
+Problem: 
+* This is a T-SQL problem
+* Calculate the number of business days between 2 dates i.e. exclude Weekends
+
+Note:
+* You will got an overview of the various date functions in T-SQL
+
+
+--- Convert(): Convert a string to date using dd/mm/yyyy format
+-- https://docs.microsoft.com/en-us/sql/t-sql/functions/cast-and-convert-transact-sql?view=sql-server-ver15
+SELECT CONVERT(DATE, '03/01/2022', 103)
+
+--DATEPART(): You have to note the difference between :
+--1. d: day of the month
+--2. dy: day of year
+--3. dw: day of week. Sunday = 1 Etc
+--4. ww,wk : week number, 1-52
+SELECT DATEPART(wk, CONVERT(DATE, '23/01/2022', 103))
+
+--DATEDIFF()
+-- d: difference in days, excluding the end date
+-- ww, wk: calculates the number of times a date range contains dates that represent pairs of Saturdays and Sundays. Includes both date values
+-- Reference: https://www.sqlservercentral.com/articles/calculating-work-days
+SELECT DATEDIFF(ww, CONVERT(DATE, '06/02/2022', 103), CONVERT(DATE, '12/02/2022', 103))	
+
+
+
+-- Example 2 : PASS
+
+BEGIN
+
+	DECLARE @StartDate DATE = CONVERT(DATE, '07/02/2022', 103)
+	DECLARE @EndDate   DATE = CONVERT(DATE, '11/02/2022', 103)
+
+	SELECT
+	   (DATEDIFF(dd, @StartDate, @EndDate) + 1) -- including the end date
+	  -(DATEDIFF(wk, @StartDate, @EndDate) * 2) --automatically includes the end date. Multiply by 2 since 2 days
+	  -(CASE WHEN DATENAME(dw, @StartDate) = 'Sunday' THEN 1 ELSE 0 END) --exclude the Sunday
+	  -(CASE WHEN DATENAME(dw, @EndDate) = 'Saturday' THEN 1 ELSE 0 END) -- exclude the Saturday
+	 
+END
