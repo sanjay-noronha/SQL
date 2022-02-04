@@ -24,13 +24,17 @@ SELECT DATEPART(wk, CONVERT(DATE, '23/01/2022', 103))
 -- Reference: https://www.sqlservercentral.com/articles/calculating-work-days
 SELECT DATEDIFF(ww, CONVERT(DATE, '06/02/2022', 103), CONVERT(DATE, '12/02/2022', 103))	
 
-
-
--- Example 2 : PASS
-
+-- Test cases: A combination of Sat-Sun makes a week
+-- Monday to Friday - Pass
+-- Monday to Monday - Pass
+-- Saturday to Sunday - Pass
+-- Sunday to Friday - Pass
+-- Sunday to Saturday - Pass
+-- Saturday to Saturday - Pass
+-- Saturday to Sunday - Pass
 BEGIN
 
-	DECLARE @StartDate DATE = CONVERT(DATE, '07/02/2022', 103)
+	DECLARE @StartDate DATE = CONVERT(DATE, '06/02/2022', 103)
 	DECLARE @EndDate   DATE = CONVERT(DATE, '11/02/2022', 103)
 
 	SELECT
